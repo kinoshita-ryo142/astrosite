@@ -36,7 +36,10 @@ async function fetchFromMicroCMS<T>(path: string) {
   }
   const API_KEY = process.env.MICROCMS_API_KEY;
   if (!API_KEY) {
-    throw new Error('MICROCMS_API_KEY is not set in environment variables');
+    // Don't throw during build — return an empty response so static generation can continue.
+    // This makes deployments more resilient when the env var hasn't been set in the host (e.g. Vercel).
+    console.warn('MICROCMS_API_KEY is not set in environment variables; returning empty contents');
+    return { contents: [] } as MicroCMSResponse<T>;
   }
 
   const res = await fetch(`https://5d3pgy559j.microcms.io/api/v1/${path}`, {
@@ -64,9 +67,13 @@ export async function getCategories(): Promise<Category[]> {
   return data?.contents ?? [];
 }
 
-export async function getNewsById(id: string): Promise<NewsItem> {
+export async function getNewsById(id: string): Promise<NewsItem | null> {
   if (!process.env.MICROCMS_API_KEY) dotenv.config();
-  const API_KEY = process.env.MICROCMS_API_KEY!;
+  const API_KEY = process.env.MICROCMS_API_KEY;
+  if (!API_KEY) {
+    console.warn('MICROCMS_API_KEY is not set in environment variables; getNewsById will return null');
+    return null;
+  }
 
   const res = await fetch(`https://5d3pgy559j.microcms.io/api/v1/news/${id}`, {
     headers: {
