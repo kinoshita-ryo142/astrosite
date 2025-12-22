@@ -1,0 +1,58 @@
+---
+import { getNews, getCategories, type Category, type NewsItem } from '../lib/microcms';
+
+// Accept optional props from the page
+const { category: selectedCategory = '', categories: categoriesProp } = Astro.props as { category?: string; categories?: Category[] };
+
+const news = (await getNews()) ?? [];
+const categories = categoriesProp ?? (await getCategories()) ?? [];
+
+function findCategoryName(id: string) {
+  const cat = categories.find((c: Category) => c.id === id);
+  return cat?.name ?? id;
+}
+
+function itemCategoryName(item: NewsItem) {
+  if (!item.category) return null;
+  if (typeof item.category === 'string') return findCategoryName(item.category);
+  if ((item.category as Category)?.id) return findCategoryName((item.category as Category).id);
+  if (Array.isArray(item.category)) return (item.category as Array<Category | string>).map((c) => findCategoryName(typeof c === 'string' ? c : c.id)).join(', ');
+  return null;
+}
+
+function itemHasCategory(item: NewsItem, categoryId: string) {
+  if (!item.category) return false;
+  if (typeof item.category === 'string') return item.category === categoryId;
+  if ((item.category as Category)?.id) return (item.category as Category).id === categoryId;
+  if (Array.isArray(item.category)) return (item.category as Array<Category | string>).some(c => (typeof c === 'string' ? c : c.id) === categoryId);
+  return false;
+}
+
+function itemCategoryIds(item: NewsItem): string[] {
+  if (!item.category) return [];
+  if (typeof item.category === 'string') return [item.category];
+  if ((item.category as Category)?.id) return [(item.category as Category).id];
+  if (Array.isArray(item.category)) return (item.category as Array<Category | string>).map(c => (typeof c === 'string' ? c : c.id));
+  return [];
+}
+
+const filteredNews = selectedCategory ? news.filter((i) => itemHasCategory(i, selectedCategory)) : news;
+---
+
+{filteredNews.length === 0 ? (
+    <div>お知らせはありません。</div>
+) : (
+    filteredNews.map((item: NewsItem) => (
+    <article class="mb-4" data-key={item.id} data-categories={itemCategoryIds(item).join(',')}>
+        <div>
+        <span class="text-sm text-gray-500">{item.publishedAt ? item.publishedAt.slice(0, 10) : ''}</span>
+        {itemCategoryName(item) && (
+        <span class="text-xs text-gray-400 ml-2"> {itemCategoryName(item)}</span>
+        )}
+        </div>
+        <div>
+        <a href={item.link && item.link.startsWith('http') ? item.link : `/news/${item.id}`} class="underline hover:no-underline">{item.title ?? '（タイトルなし）'}</a>
+        </div>
+    </article>
+    ))
+)}

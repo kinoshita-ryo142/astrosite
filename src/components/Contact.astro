@@ -1,0 +1,94 @@
+---
+import { contactSchema } from '../lib/contactSchema';
+---
+<script type="module">
+  const form = document.getElementById('contact-form');
+  const statusEl = document.getElementById('form-status');
+
+  const clearErrors = () => {
+    document.querySelectorAll('[data-error-for]').forEach(el => el.textContent = '');
+    statusEl.textContent = '';
+    statusEl.className = 'text-sm';
+  };
+
+  const showErrors = (zodError) => {
+    if (!zodError || !zodError.errors) return;
+    zodError.errors.forEach(err => {
+      const path = err.path[0];
+      const el = document.querySelector(`[data-error-for="${path}"]`);
+      if (el) el.textContent = err.message;
+    });
+  };
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    clearErrors();
+
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+
+    // client-side validation
+    try {
+      contactSchema.parse(data);
+    } catch (err) {
+      showErrors(err);
+      statusEl.textContent = '入力にエラーがあります。ご確認ください。';
+      statusEl.classList.add('text-red-600');
+      return;
+    }
+
+    statusEl.textContent = '送信中…';
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      const json = await res.json();
+      if (!res.ok) {
+        if (json.errors) {
+          const flattened = json.errors.fieldErrors || {};
+          Object.keys(flattened).forEach(key => {
+            const el = document.querySelector(`[data-error-for="${key}"]`);
+            if (el) el.textContent = flattened[key].join(' ');
+          });
+          statusEl.textContent = '入力にエラーがあります。ご確認ください。';
+          statusEl.classList.add('text-red-600');
+          return;
+        }
+        statusEl.textContent = '送信に失敗しました。時間を置いて再度お試しください。';
+        statusEl.classList.add('text-red-600');
+        return;
+      }
+      statusEl.textContent = '送信が完了しました。ありがとうございました！';
+      statusEl.classList.add('text-green-600');
+      form.reset();
+    } catch (err) {
+      statusEl.textContent = '送信に失敗しました（ネットワークエラー）。';
+      statusEl.classList.add('text-red-600');
+      console.error(err);
+    }
+  });
+</script>
+
+<div>
+  <div>
+    <form id="contact-form" class="flex flex-col gap-4">
+      <label for="name" class="font-bold">お名前</label>
+      <input type="text" id="name" name="name" class="border border-gray-300 p-2 rounded" />
+      <p class="text-red-600 text-sm" data-error-for="name"></p>
+
+      <label for="email" class="font-bold">メールアドレス</label>
+      <input type="email" id="email" name="email" class="border border-gray-300 p-2 rounded" />
+      <p class="text-red-600 text-sm" data-error-for="email"></p>
+
+      <label for="message" class="font-bold">お問い合わせ内容</label>
+      <textarea id="message" name="message" rows="5" class="border border-gray-300 p-2 rounded"></textarea>
+      <p class="text-red-600 text-sm" data-error-for="message"></p>
+
+      <p id="form-status" class="text-sm"></p>
+
+      <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">送信</button>
+    </form>
+  </div>
+</div>

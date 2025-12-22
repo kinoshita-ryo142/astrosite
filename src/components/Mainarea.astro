@@ -1,0 +1,51 @@
+---
+import Newslist from '../components/Newslist.astro';
+import Contact from '../components/Contact.astro';
+import Footer from '../components/Footer.astro';
+---
+
+      <div id="main_area" class="relative z-10 max-w-full lg:max-w-[500px] ml-auto lg:mr-[250px] bg-white">
+        <main>
+          <section id="section1">
+            <div class="w-full"><img src="images/sample.webp" alt="サンプル画像" class="w-full" loading="lazy"></div>
+            <div class="px-4 py-6">
+              <h2 class="text-2xl font-bold mb-4">サブタイトル1</h2>
+              <h3 class="text-lg font-bold mb-4">サブタイトル1-1</h3>
+              <p class="my-4">コンテンツがここに入ります。コンテンツがここに入ります。コンテンツがここに入ります。コンテンツがここに入ります。コンテンツがここに入ります。</p>
+              <div class="mb-6 w-[70%] aspect-square rounded-full overflow-hidden mx-auto">
+                <img src="images/sample.webp" alt="サンプル画像" class="w-full h-full object-cover">
+              </div>
+              <h3 class="text-lg font-bold mb-4">サブタイトル1-2</h3>
+              <p class="my-4">コンテンツがここに入ります。コンテンツがここに入ります。コンテンツがここに入ります。コンテンツがここに入ります。コンテンツがここに入ります。</p>
+              <div class="mb-6"><img src="images/sample.webp" alt="サンプル画像" class="w-full" loading="lazy"></div>
+            </div>
+          </section>
+          <section id="section2">
+            <div class="px-4 py-6">
+              <h2 class="text-2xl font-bold mb-4">サブタイトル2</h2>
+              <p class="my-4">コンテンツがここに入ります。コンテンツがここに入ります。コンテンツがここに入ります。コンテンツがここに入ります。コンテンツがここに入ります。</p>
+              <div class="flex gap-x-4">
+                <div><img src="images/sample.webp" alt="サンプル画像" class="w-full" loading="lazy"></div>
+                <div><img src="images/sample.webp" alt="サンプル画像" class="w-full" loading="lazy"></div>
+              </div>
+            </div>
+          </section>
+          <section id="news">
+            <div class="py-6">
+              <h2 class="bg-gray-200 text-center py-2">お知らせ</h2>
+              <div class="px-4 py-6">
+                <Newslist />
+                <div class="text-right mt-4"><a href="/news" class="underline text-gray-900">一覧表示</a></div>
+              </div>
+            </div>
+          </section>
+          <section id="contact">
+            <h2 class="bg-gray-200 text-center py-2">お問い合わせ</h2>
+            <div class="px-4 py-6">
+              <Contact />
+            </div>
+          </section>
+        </main>
+        <Footer />
+      </div>
+

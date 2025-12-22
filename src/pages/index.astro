@@ -1,11 +1,16 @@
 ---
-import Welcome from '../components/Welcome.astro';
+import Header from '../components/Header.astro';
+import Mainarea from '../components/Mainarea.astro';
 import Layout from '../layouts/Layout.astro';
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+import Marquee from '../components/Marquee.astro';
 ---
 
 <Layout>
-	<Welcome />
+    <div class="relative min-h-screen">
+      <div class="relative lg:fixed top-0 left-0 w-full z-0">
+        <Header />
+        <Marquee />
+      </div>
+	    <Mainarea />
+    </div>
 </Layout>

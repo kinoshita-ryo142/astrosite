@@ -1,0 +1,30 @@
+<header>
+  <div id="header_area" class="relative flex flex-row items-center justify-center lg:justify-between lg:h-screen lg:gap-x-[500px]">
+    <div class="w-auto lg:flex-1 p-6 h-full bg-cover bg-center bg-no-repeat mainbg">
+      <h1 class="text-gray-500 text-4xl font-bold text-left lg:text-center lg:mt-10">メインタイトル</h1>
+    </div>
+    <div class="lg:w-[250px] shrink-0 p-6 lg:h-full lg:bg-cover lg:bg-center lg:bg-no-repeat lg:flex lg:flex-col lg:justify-center subbg">
+      <div class="block lg:hidden">
+        <button id="hamburgerBtn"
+                aria-label="メニューを開く"
+                aria-controls="mobileMenu"
+                aria-expanded="false"
+                class="p-2 rounded-md bg-white/10 text-white hover:bg-white/20 focus:outline-none">
+          <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="https://www.w3.org/2000/svg" focusable="false" aria-hidden="true">
+            <path d="M3 6h18"></path>
+            <path d="M3 12h18"></path>
+            <path d="M3 18h18"></path>
+          </svg>
+        </button>
+      </div>
+      <nav id="mainmenu" class="hidden lg:block">
+        <ul class="text-black rounded-lg overflow-hidden w-full backdrop-blur-md">
+          <li><a href="#section1" class="bg-white/60 block p-4 hover:bg-white/80">メニュー1</a></li>
+          <li><a href="#section2" class="bg-white/60 block p-4 hover:bg-white/80">メニュー2</a></li>
+          <li><a href="/news" class="bg-white/60 block p-4 hover:bg-white/80">お知らせ</a></li>
+          <li><a href="#contact" class="bg-white/60 block p-4 hover:bg-white/80">お問い合わせ</a></li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</header>

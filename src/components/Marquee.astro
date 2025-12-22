@@ -1,0 +1,85 @@
+<script>
+import { gsap } from 'gsap'
+
+const initMarquee = (): void => {
+  const track = document.querySelector<HTMLElement>('.marquee-track')
+  if (!track) return
+
+  // Clear any previous clones
+  track.querySelectorAll('.clone').forEach((n) => n.remove())
+
+  const items = Array.from(track.children) as HTMLElement[]
+  // Clone items to make seamless loop
+  items.forEach((item) => {
+    const c = item.cloneNode(true) as HTMLElement
+    c.classList.add('clone')
+    track.appendChild(c)
+  })
+
+  let tween: gsap.core.Tween | null = null
+
+  const update = (): void => {
+    if (tween) tween.kill()
+
+    const distance = track.scrollWidth / 2
+    // speed: pixels per second
+    const speed = 50
+    const duration = distance / speed
+
+    gsap.set(track, { x: 0 })
+
+    tween = gsap.to(track, {
+      x: -distance,
+      duration,
+      ease: 'none',
+      repeat: -1,
+      modifiers: {
+        x: (x: string) => `${parseFloat(x)}px`,
+      },
+    })
+  }
+
+  let resizeRAF: number | null = null
+  const onResize = (): void => {
+    if (resizeRAF) cancelAnimationFrame(resizeRAF)
+    resizeRAF = requestAnimationFrame(() => update())
+  }
+
+  const onPointerEnter = (): void => { if (tween) tween.pause() }
+  const onPointerLeave = (): void => { if (tween) tween.play() }
+
+  update()
+  window.addEventListener('resize', onResize)
+
+  // pause on hover / resume on leave
+  track.addEventListener('pointerenter', onPointerEnter)
+  track.addEventListener('pointerleave', onPointerLeave)
+
+  // store for cleanup if needed (attach to element as any)
+  ;(track as any)._marqueeCleanup = () => {
+    window.removeEventListener('resize', onResize)
+    track.removeEventListener('pointerenter', onPointerEnter)
+    track.removeEventListener('pointerleave', onPointerLeave)
+  }
+}
+
+// init on DOM ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initMarquee)
+} else {
+  initMarquee()
+}
+</script>
+
+    <div id="global_marquee" class="fixed left-0 right-0 bottom-0 z-0 pointer-events-none">
+      <div class="w-full overflow-hidden bg-transparent">
+        <div class="marquee-track flex items-center whitespace-nowrap will-change-transform">
+          <span class="marquee-item text-white text-2xl lg:text-3xl font-bold px-8">CHANGE YOURSELF</span>
+          <span class="marquee-item text-white text-2xl lg:text-3xl font-bold px-8">CHANGE YOURSELF</span>
+          <span class="marquee-item text-white text-2xl lg:text-3xl font-bold px-8">CHANGE YOURSELF</span>
+          <span class="marquee-item text-white text-2xl lg:text-3xl font-bold px-8">CHANGE YOURSELF</span>
+          <span class="marquee-item text-white text-2xl lg:text-3xl font-bold px-8">CHANGE YOURSELF</span>
+        </div>
+      </div>
+    </div>
+

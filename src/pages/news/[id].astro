@@ -1,0 +1,52 @@
+---
+import Header from '../../components/Header.astro';
+import Layout from '../../layouts/Layout.astro';
+import Marquee from '../../components/Marquee.astro';
+import Footer from '../../components/Footer.astro';
+import { getNewsById, getNews, type NewsItem } from '../../lib/microcms';
+
+export async function getStaticPaths() {
+  const news = await getNews();
+  return news.map((n) => ({ params: { id: n.id } }));
+}
+
+const { id } = Astro.params as { id: string };
+let item: NewsItem | null = null;
+try {
+  item = await getNewsById(id);
+} catch (e) {
+  // item remains null when not found
+}
+---
+
+<Layout>
+    <div class="relative min-h-screen">
+      <div class="relative lg:fixed top-0 left-0 w-full z-0">
+        <Header />
+        <Marquee />
+      </div>
+      <div id="main_area" class="relative z-10 max-w-full lg:max-w-[500px] ml-auto lg:mr-[250px] bg-white">
+        <main>
+          <section id="news_detail">
+            <div class="px-4 py-6">
+              {item ? (
+                <div>
+                  <h2 class="text-xl font-bold mb-2">{item.title}</h2>
+                  <div class="mb-4 text-sm text-gray-600 text-right">{item.publishedAt ? item.publishedAt.slice(0, 10) : ''}</div>
+                  <div class="cms_content" set:html={item.content ?? ''}></div>
+                </div>
+              ) : (
+                <div class="text-center py-12">
+                  <p class="text-gray-600">記事が見つかりませんでした。</p>
+                </div>
+              )}
+                <div class="text-center mt-8">
+                  <a href="/" class="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">トップページに戻る</a>
+                </div>
+            </div>
+          </section>
+        </main>
+        <Footer />
+      </div>
+    </div>
+</Layout>
