@@ -9,10 +9,10 @@ html { scroll-behavior: smooth; }
 
 @media (min-width: 1024px) {
     .mainbg {
-        background-image: url('../images/bgsample.webp');
+        background-image: url('/images/bgsample.webp');
     }
     .subbg {
-        background-image: url('../images/bgsample2.webp');
+        background-image: url('/images/bgsample2.webp');
     }
 }
 
