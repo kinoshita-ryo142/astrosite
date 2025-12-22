@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { contactSchema } from '../../lib/contactSchema';
 
-export async function post({ request }) {
+export async function post({ request }: { request: Request }) {
   try {
     const body = await request.json();
     const parsed = contactSchema.parse(body);
@@ -27,4 +27,11 @@ export async function post({ request }) {
     }
     return new Response(JSON.stringify({ success: false, message: 'サーバーエラー' }), { status: 500, headers: { 'Content-Type': 'application/json' } });
   }
+}
+
+export async function get() {
+  return new Response(JSON.stringify({ success: false, message: 'Method Not Allowed' }), {
+    status: 405,
+    headers: { 'Content-Type': 'application/json', 'Allow': 'POST' }
+  });
 }
